@@ -23,41 +23,51 @@ def get_image_base64(image_path):
 # Obter logo em base64
 logo_base64 = get_image_base64("image.png")
 
-# Esconder TUDO do Streamlit - remover barras brancas
+# Esconder TUDO do Streamlit e fazer iframe ocupar tela toda
 st.markdown("""
 <style>
-    #MainMenu {visibility: hidden !important;}
-    footer {visibility: hidden !important;}
-    header {visibility: hidden !important;}
-    .stApp > header {display: none !important;}
-    .stApp {background: transparent !important;}
-    .block-container {
-        padding: 0 !important; 
-        max-width: 100% !important;
+    #MainMenu, footer, header, .stApp > header, div[data-testid="stHeader"], 
+    section[data-testid="stSidebar"], div[data-testid="stDecoration"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    html, body, .stApp, [data-testid="stAppViewContainer"], 
+    .main, .block-container, .stMainBlockContainer,
+    [data-testid="stVerticalBlock"], [data-testid="element-container"] {
+        padding: 0 !important;
         margin: 0 !important;
-    }
-    .stMainBlockContainer {
-        padding: 0 !important;
         max-width: 100% !important;
+        width: 100% !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        background: transparent !important;
     }
-    div[data-testid="stAppViewContainer"] {
-        padding: 0 !important;
+    
+    .stApp {
+        background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 25%, #EC4899 50%, #F97316 75%, #FBBF24 100%) !important;
+        background-size: 400% 400% !important;
+        animation: gradientBG 15s ease infinite !important;
     }
-    div[data-testid="stHeader"] {
-        display: none !important;
+    
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
-    section[data-testid="stSidebar"] {
-        display: none !important;
-    }
-    .st-emotion-cache-z5fcl4 {
-        padding: 0 !important;
-    }
-    .st-emotion-cache-1y4p8pa {
-        padding: 0 !important;
-        max-width: 100% !important;
-    }
+    
     iframe {
         border: none !important;
+        width: 100% !important;
+        height: 100vh !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+    }
+    
+    .element-container {
+        width: 100% !important;
+        height: 100vh !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -471,5 +481,5 @@ full_page_html = f"""
 </html>
 """
 
-# Renderizar página completa
-st.components.v1.html(full_page_html, height=700, scrolling=False)
+# Renderizar página completa - altura grande para preencher tela
+st.components.v1.html(full_page_html, height=2000, scrolling=False)

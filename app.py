@@ -23,6 +23,45 @@ def get_image_base64(image_path):
 # Obter logo em base64
 logo_base64 = get_image_base64("image.png")
 
+# Esconder TUDO do Streamlit - remover barras brancas
+st.markdown("""
+<style>
+    #MainMenu {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    header {visibility: hidden !important;}
+    .stApp > header {display: none !important;}
+    .stApp {background: transparent !important;}
+    .block-container {
+        padding: 0 !important; 
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+    .stMainBlockContainer {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+    div[data-testid="stAppViewContainer"] {
+        padding: 0 !important;
+    }
+    div[data-testid="stHeader"] {
+        display: none !important;
+    }
+    section[data-testid="stSidebar"] {
+        display: none !important;
+    }
+    .st-emotion-cache-z5fcl4 {
+        padding: 0 !important;
+    }
+    .st-emotion-cache-1y4p8pa {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+    iframe {
+        border: none !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # CSS + HTML + Chat tudo em um único componente
 full_page_html = f"""
 <!DOCTYPE html>
@@ -39,11 +78,16 @@ full_page_html = f"""
             font-family: 'Poppins', sans-serif;
         }}
         
+        html, body {{
+            height: 100%;
+            overflow: hidden;
+        }}
+        
         body {{
             background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 25%, #EC4899 50%, #F97316 75%, #FBBF24 100%);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
-            min-height: 100vh;
+            height: 100%;
             display: flex;
             flex-direction: column;
         }}
@@ -56,72 +100,68 @@ full_page_html = f"""
         
         .header {{
             text-align: center;
-            padding: 20px;
-            background: rgba(255,255,255,0.95);
-            border-radius: 0 0 30px 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 15px;
+            flex-shrink: 0;
         }}
         
         .header img {{
-            width: 80px;
+            width: 60px;
             height: auto;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }}
         
         .header h1 {{
-            background: linear-gradient(135deg, #8B5CF6, #EC4899, #F97316);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 1.8rem;
+            color: white;
+            font-size: 1.5rem;
             font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }}
         
         .header p {{
-            color: #6B7280;
-            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.85rem;
         }}
         
         .color-dots {{
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin: 10px 0;
+            gap: 6px;
+            margin: 8px 0;
         }}
         
         .color-dot {{
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             animation: pulse 2s ease-in-out infinite;
         }}
         
-        .dot-purple {{ background: #8B5CF6; animation-delay: 0s; }}
-        .dot-pink {{ background: #EC4899; animation-delay: 0.2s; }}
-        .dot-orange {{ background: #F97316; animation-delay: 0.4s; }}
-        .dot-yellow {{ background: #FBBF24; animation-delay: 0.6s; }}
-        .dot-green {{ background: #10B981; animation-delay: 0.8s; }}
-        .dot-blue {{ background: #3B82F6; animation-delay: 1s; }}
+        .dot-purple {{ background: white; animation-delay: 0s; }}
+        .dot-pink {{ background: #FBBF24; animation-delay: 0.2s; }}
+        .dot-orange {{ background: #10B981; animation-delay: 0.4s; }}
+        .dot-yellow {{ background: #3B82F6; animation-delay: 0.6s; }}
+        .dot-green {{ background: #EC4899; animation-delay: 0.8s; }}
+        .dot-blue {{ background: white; animation-delay: 1s; }}
         
         @keyframes pulse {{
-            0%, 100% {{ transform: scale(1); }}
-            50% {{ transform: scale(1.3); }}
+            0%, 100% {{ transform: scale(1); opacity: 0.8; }}
+            50% {{ transform: scale(1.4); opacity: 1; }}
         }}
         
         .chat-wrapper {{
             flex: 1;
             display: flex;
             justify-content: center;
-            align-items: stretch;
-            padding: 20px;
-            min-height: 500px;
+            padding: 0 15px 15px 15px;
+            min-height: 0;
         }}
         
         .chat-container {{
             background: white;
             border-radius: 20px;
             width: 100%;
-            max-width: 900px;
+            max-width: 800px;
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
             overflow: hidden;
             display: flex;
@@ -131,47 +171,166 @@ full_page_html = f"""
         .chat-header {{
             background: linear-gradient(135deg, #8B5CF6, #A855F7);
             color: white;
-            padding: 15px 20px;
+            padding: 12px 20px;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-shrink: 0;
         }}
         
         .chat-header-icon {{
-            width: 35px;
-            height: 35px;
+            width: 32px;
+            height: 32px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }}
         
         .chat-header-icon img {{
-            width: 25px;
-            height: 25px;
+            width: 22px;
+            height: 22px;
         }}
         
         .chat-body {{
             flex: 1;
-            padding: 0;
-            min-height: 450px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            position: relative;
         }}
         
-        langflow-chat {{
-            display: block;
-            width: 100%;
-            height: 100%;
+        #chat-area {{
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }}
+        
+        .welcome-message {{
+            background: linear-gradient(135deg, #F3E8FF, #FCE7F3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }}
+        
+        .welcome-message h3 {{
+            color: #8B5CF6;
+            margin-bottom: 10px;
+        }}
+        
+        .welcome-message p {{
+            color: #6B7280;
+            font-size: 0.9rem;
+        }}
+        
+        .message {{
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }}
+        
+        .message.user {{
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }}
+        
+        .message.bot {{
+            background: #F3F4F6;
+            color: #374151;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }}
+        
+        .input-area {{
+            padding: 15px 20px;
+            border-top: 1px solid #E5E7EB;
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+            background: white;
+        }}
+        
+        #user-input {{
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #E5E7EB;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }}
+        
+        #user-input:focus {{
+            border-color: #8B5CF6;
+        }}
+        
+        #send-btn {{
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }}
+        
+        #send-btn:hover {{
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }}
+        
+        #send-btn svg {{
+            width: 20px;
+            height: 20px;
+        }}
+        
+        .typing {{
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: #F3F4F6;
+            border-radius: 18px;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }}
+        
+        .typing span {{
+            width: 8px;
+            height: 8px;
+            background: #9CA3AF;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }}
+        
+        .typing span:nth-child(2) {{ animation-delay: 0.2s; }}
+        .typing span:nth-child(3) {{ animation-delay: 0.4s; }}
+        
+        @keyframes typing {{
+            0%, 100% {{ transform: translateY(0); }}
+            50% {{ transform: translateY(-5px); }}
         }}
         
         .footer {{
             text-align: center;
-            padding: 15px;
-            color: white;
-            font-size: 0.85rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            padding: 10px;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.75rem;
+            flex-shrink: 0;
         }}
         
         .footer a {{
@@ -204,39 +363,113 @@ full_page_html = f"""
                 <span>✨ Viva numa boa! - Converse comigo</span>
             </div>
             <div class="chat-body">
-                <script src="https://cdn.jsdelivr.net/gh/logspace-ai/langflow-embedded-chat@v1.0.7/dist/build/static/js/bundle.min.js"></script>
-                <langflow-chat
-                    window_title="ChatBot Valcapelli"
-                    flow_id="61a17804-9284-446d-8e60-3801aef9bb60"
-                    host_url="https://langflow.inovai.app"
-                    api_key="{api_key}"
-                    online="true"
-                    open_on_load="true"
-                    height="100%">
-                </langflow-chat>
+                <div id="chat-area">
+                    <div class="welcome-message">
+                        <h3>Olá! Bem-vindo(a)! 👋</h3>
+                        <p>Sou o assistente virtual do Valcapelli. Como posso ajudar você hoje?</p>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <input type="text" id="user-input" placeholder="Digite sua mensagem..." autocomplete="off">
+                    <button id="send-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
     
     <div class="footer">
-        <p>Desenvolvido com 💜 | <a href="https://www.valcapelli.com" target="_blank">www.valcapelli.com</a></p>
-        <p>Metafísica da Saúde • Cromoterapia • Bem-estar</p>
+        <a href="https://www.valcapelli.com" target="_blank">www.valcapelli.com</a> • Metafísica da Saúde • Cromoterapia
     </div>
+    
+    <script>
+        const chatArea = document.getElementById('chat-area');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const API_KEY = "{api_key}";
+        const FLOW_ID = "61a17804-9284-446d-8e60-3801aef9bb60";
+        const HOST_URL = "https://langflow.inovai.app";
+        
+        function addMessage(text, isUser) {{
+            const msg = document.createElement('div');
+            msg.className = 'message ' + (isUser ? 'user' : 'bot');
+            msg.textContent = text;
+            chatArea.appendChild(msg);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }}
+        
+        function showTyping() {{
+            const typing = document.createElement('div');
+            typing.className = 'typing';
+            typing.id = 'typing-indicator';
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            chatArea.appendChild(typing);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }}
+        
+        function hideTyping() {{
+            const typing = document.getElementById('typing-indicator');
+            if (typing) typing.remove();
+        }}
+        
+        async function sendMessage() {{
+            const text = userInput.value.trim();
+            if (!text) return;
+            
+            addMessage(text, true);
+            userInput.value = '';
+            showTyping();
+            
+            try {{
+                const response = await fetch(HOST_URL + '/api/v1/run/' + FLOW_ID, {{
+                    method: 'POST',
+                    headers: {{
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    }},
+                    body: JSON.stringify({{
+                        input_value: text,
+                        output_type: 'chat',
+                        input_type: 'chat'
+                    }})
+                }});
+                
+                const data = await response.json();
+                hideTyping();
+                
+                let botResponse = 'Desculpe, não consegui processar sua mensagem.';
+                if (data.outputs && data.outputs[0] && data.outputs[0].outputs && data.outputs[0].outputs[0]) {{
+                    const output = data.outputs[0].outputs[0];
+                    if (output.results && output.results.message && output.results.message.text) {{
+                        botResponse = output.results.message.text;
+                    }} else if (output.messages && output.messages[0] && output.messages[0].message) {{
+                        botResponse = output.messages[0].message;
+                    }} else if (output.artifacts && output.artifacts.message) {{
+                        botResponse = output.artifacts.message;
+                    }}
+                }}
+                
+                addMessage(botResponse, false);
+            }} catch (error) {{
+                hideTyping();
+                addMessage('Ops! Ocorreu um erro. Tente novamente.', false);
+                console.error(error);
+            }}
+        }}
+        
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {{
+            if (e.key === 'Enter') sendMessage();
+        }});
+        
+        userInput.focus();
+    </script>
 </body>
 </html>
 """
 
-# Esconder elementos do Streamlit
-st.markdown("""
-<style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    .stApp > header {display: none;}
-    .block-container {padding: 0 !important; max-width: 100% !important;}
-    iframe {border: none !important;}
-</style>
-""", unsafe_allow_html=True)
-
 # Renderizar página completa
-st.components.v1.html(full_page_html, height=800, scrolling=False)
+st.components.v1.html(full_page_html, height=700, scrolling=False)
